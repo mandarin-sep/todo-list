@@ -14,12 +14,20 @@ export async function getAxios<T>(url: string, config?: AxiosRequestConfig): Pro
 	return res.data
 }
 
-export async function postAxios<T, B extends object>(url: string, body?: B, config?: AxiosRequestConfig): Promise<T> {
+export async function postAxios<T, TBody extends object>(
+	url: string,
+	body?: TBody,
+	config?: AxiosRequestConfig
+): Promise<T> {
 	const res = await apiClient.post<T>(url, body, config)
 	return res.data
 }
 
-export async function patchAxios<T, B extends object>(url: string, body?: B, config?: AxiosRequestConfig): Promise<T> {
+export async function patchAxios<T, TBody extends object>(
+	url: string,
+	body?: TBody,
+	config?: AxiosRequestConfig
+): Promise<T> {
 	const res = await apiClient.patch<T>(url, body, config)
 	return res.data
 }

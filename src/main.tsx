@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-	// Import the generated route tree
+// Import the generated route tree
 import { routeTree } from './routeTree.gen'
 
 import './styles.css'
@@ -30,7 +30,7 @@ async function enableMocking() {
 
 	const { worker } = await import('./mocks/browser')
 	await worker.start({
-		onUnhandledRequest: 'warn'
+		onUnhandledRequest: 'bypass'
 	})
 }
 

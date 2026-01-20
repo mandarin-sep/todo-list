@@ -1,25 +1,9 @@
-import { useDeleteTodo, usePatchTodo } from '../api/fetchList'
-import Tag from './Tag'
-import type { TodoItem } from '../types/todo'
+import { useEditTodo } from '../hooks/useEditTodo'
+import Tag from '../../tags/components/UI/Tag'
+import type { TodoItem } from '../../../shared/types/todo'
 
 const TodoItems = ({ todo }: { todo: TodoItem }) => {
-	const { mutate: deleteTodo } = useDeleteTodo()
-	const { mutate: patchTodo } = usePatchTodo()
-	const handleToggleStatus = () => {
-		patchTodo({
-			key: todo.key,
-			status: todo.status === 'doing' ? 'done' : 'doing'
-		})
-	}
-	const handleDeleteTodo = () => {
-		deleteTodo(todo.key)
-	}
-	const handleDeleteTag = (tag: string) => {
-		patchTodo({
-			key: todo.key,
-			tags: todo.tags.filter((current) => current !== tag)
-		})
-	}
+	const { handleToggleStatus, handleDeleteTodo, handleDeleteTag } = useEditTodo({ todo })
 	return (
 		<li className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
 			<div className="flex items-center gap-3">

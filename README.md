@@ -1,293 +1,123 @@
-Welcome to your new TanStack app!
+# Todo List
 
-# Getting Started
+할 일 목록을 관리할 수 있는 웹 애플리케이션입니다. 태그 기능과 필터링, 통계 기능을 제공합니다.
 
-To run this application:
+## 주요 기능
+
+- ✅ 할 일 추가, 수정, 삭제
+- 🏷️ 태그 관리 (태그 추가, 수정, 삭제)
+- 🔍 상태별 필터링 (진행 중, 완료)
+- 📊 할 일 통계 (전체, 진행 중, 완료 개수)
+- 🔄 로딩 상태 표시
+
+## 기술 스택
+
+### Core
+- **React 19** - UI 라이브러리
+- **TypeScript** - 타입 안정성
+- **Vite** - 빌드 도구 및 개발 서버
+
+### 라우팅 & 상태 관리
+- **TanStack Router** - 파일 기반 라우팅
+- **TanStack Query (React Query)** - 서버 상태 관리 및 데이터 페칭
+
+### 스타일링
+- **Tailwind CSS** - 유틸리티 기반 CSS 프레임워크
+- **Lucide React** - 아이콘 라이브러리
+
+### HTTP 클라이언트
+- **Axios** - HTTP 요청 처리
+
+### 개발 도구
+- **MSW (Mock Service Worker)** - API 모킹
+- **Vitest** - 테스트 프레임워크
+- **ESLint & Prettier** - 코드 품질 관리
+- **TanStack Devtools** - 개발자 도구
+
+## 프로젝트 구조
+
+```
+src/
+├── features/          # 기능별 모듈
+│   ├── todos/        # 할 일 관련 기능
+│   │   ├── api/      # API 호출 훅
+│   │   ├── components/ # UI 컴포넌트
+│   │   └── hooks/    # 커스텀 훅
+│   └── tags/         # 태그 관련 기능
+├── pages/            # 페이지 컴포넌트
+├── routes/           # 라우트 정의
+├── shared/           # 공유 유틸리티 및 타입
+│   ├── constants/    # 상수
+│   ├── types/        # 타입 정의
+│   └── utils/        # 유틸리티 함수
+└── mocks/            # MSW 핸들러
+```
+
+## 시작하기
+
+### 설치
 
 ```bash
 npm install
-npm run start
 ```
 
-# Building For Production
+### 개발 서버 실행
 
-To build this application for production:
+```bash
+npm run dev
+```
+
+개발 서버는 `http://localhost:3000`에서 실행됩니다.
+
+### 프로덕션 빌드
 
 ```bash
 npm run build
 ```
 
-## Testing
+## 스크립트
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
-
+### 개발
 ```bash
-npm run test
+npm run dev          # 개발 서버 실행
 ```
 
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-## Linting & Formatting
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
-
+### 빌드
 ```bash
-npm run lint
-npm run format
-npm run check
+npm run build        # 프로덕션 빌드
+npm run preview      # 빌드 결과 미리보기
 ```
 
-## Routing
+## 주요 구현 사항
 
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
+### Feature-based 아키텍처
+기능별로 모듈을 분리하여 유지보수성과 확장성을 높였습니다. 각 feature는 `api`, `components`, `hooks`로 구성됩니다.
 
-### Adding A Route
+### MSW를 활용한 API 모킹
+개발 환경에서 실제 백엔드 없이도 API를 테스트할 수 있도록 MSW를 설정했습니다.
 
-To add a new route to your application just add another a new file in the `./src/routes` directory.
+## 기술 스택 상세
 
-TanStack will automatically generate the content of the route file for you.
+### TanStack Router
+파일 기반 라우팅을 사용합니다. `src/routes` 디렉토리에 라우트 파일을 추가하면 자동으로 라우트가 생성됩니다.
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+- 파일 기반 라우팅
+- 타입 안전한 네비게이션
+- 자동 코드 스플리팅
 
-### Adding Links
+### TanStack Query (React Query)
+서버 상태 관리와 데이터 페칭을 담당합니다.
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+- 자동 캐싱 및 재검증
+- 낙관적 업데이트
+- 에러 처리 및 재시도
+- 로딩 상태 관리
 
-```tsx
-import { Link } from '@tanstack/react-router'
-```
 
-Then anywhere in your JSX you can use it like so:
+### MSW (Mock Service Worker)
+개발 환경에서 API를 모킹합니다. `src/mocks/handlers.ts`에서 핸들러를 정의합니다.
 
-```tsx
-<Link to="/about">About</Link>
-```
 
-This will create a link that will navigate to the `/about` route.
+### AI tool
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-	component: () => (
-		<>
-			<header>
-				<nav>
-					<Link to="/">Home</Link>
-					<Link to="/about">About</Link>
-				</nav>
-			</header>
-			<Outlet />
-			<TanStackRouterDevtools />
-		</>
-	)
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-	getParentRoute: () => rootRoute,
-	path: '/people',
-	loader: async () => {
-		const response = await fetch('https://swapi.dev/api/people')
-		return response.json() as Promise<{
-			results: {
-				name: string
-			}[]
-		}>
-	},
-	component: () => {
-		const data = peopleRoute.useLoaderData()
-		return (
-			<ul>
-				{data.results.map((person) => (
-					<li key={person.name}>{person.name}</li>
-				))}
-			</ul>
-		)
-	}
-})
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-npm install @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-// ...
-
-const queryClient = new QueryClient()
-
-// ...
-
-if (!rootElement.innerHTML) {
-	const root = ReactDOM.createRoot(rootElement)
-
-	root.render(
-		<QueryClientProvider client={queryClient}>
-			<RouterProvider router={router} />
-		</QueryClientProvider>
-	)
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-
-const rootRoute = createRootRoute({
-	component: () => (
-		<>
-			<Outlet />
-			<ReactQueryDevtools buttonPosition="top-right" />
-			<TanStackRouterDevtools />
-		</>
-	)
-})
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from '@tanstack/react-query'
-
-import './App.css'
-
-function App() {
-	const { data } = useQuery({
-		queryKey: ['people'],
-		queryFn: () =>
-			fetch('https://swapi.dev/api/people')
-				.then((res) => res.json())
-				.then((data) => data.results as { name: string }[]),
-		initialData: []
-	})
-
-	return (
-		<div>
-			<ul>
-				{data.map((person) => (
-					<li key={person.name}>{person.name}</li>
-				))}
-			</ul>
-		</div>
-	)
-}
-
-export default App
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
-```bash
-npm install @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from '@tanstack/react-store'
-import { Store } from '@tanstack/store'
-import './App.css'
-
-const countStore = new Store(0)
-
-function App() {
-	const count = useStore(countStore)
-	return (
-		<div>
-			<button onClick={() => countStore.setState((n) => n + 1)}>Increment - {count}</button>
-		</div>
-	)
-}
-
-export default App
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from '@tanstack/react-store'
-import { Store, Derived } from '@tanstack/store'
-import './App.css'
-
-const countStore = new Store(0)
-
-const doubledStore = new Derived({
-	fn: () => countStore.state * 2,
-	deps: [countStore]
-})
-doubledStore.mount()
-
-function App() {
-	const count = useStore(countStore)
-	const doubledCount = useStore(doubledStore)
-
-	return (
-		<div>
-			<button onClick={() => countStore.setState((n) => n + 1)}>Increment - {count}</button>
-			<div>Doubled - {doubledCount}</div>
-		</div>
-	)
-}
-
-export default App
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+README.md 초안 작성과 화면 스타일링, MSW mocking 핸들러 템플릿 작성에 AI 를 활용하였습니다. 

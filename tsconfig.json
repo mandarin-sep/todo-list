@@ -1,8 +1,16 @@
 {
-	"include": ["**/*.ts", "**/*.tsx", "eslint.config.js", "prettier.config.js", "vite.config.js"],
+	"include": [
+		"**/*.ts",
+		"**/*.tsx",
+		"public/**/*.js",
+		"eslint.config.js",
+		"prettier.config.js",
+		"vite.config.js"
+	],
 
 	"compilerOptions": {
 		"target": "ES2022",
+		"allowJs": true,
 		"jsx": "react-jsx",
 		"module": "ESNext",
 		"lib": ["ES2022", "DOM", "DOM.Iterable"],
