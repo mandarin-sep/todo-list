@@ -1,11 +1,9 @@
 import { useState } from 'react'
-import { useGetTodoList } from '../api/fetchList'
 import { TODO_STATUS } from '../../../shared/constants/todoStatus'
 import type { TodoStatus } from '../../../shared/constants/todoStatus'
 import type { TodoItem } from '../../../shared/types/todo'
 
-export const useTodoFilters = ({ selectedTag }: { selectedTag: string }) => {
-    const { data: todos = []} = useGetTodoList()
+export const useTodoFilters = ({ selectedTag, todos = [] }: { selectedTag: string, todos: Array<TodoItem> }) => {
     const [filter, setFilter] = useState<TodoStatus>(TODO_STATUS.ALL)
     
     const filteredByTag = todos.filter((todo: TodoItem) => {

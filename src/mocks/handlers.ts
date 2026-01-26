@@ -40,7 +40,7 @@ export const handlers = [
 		const body = (await request.json()) as { tags: Array<string> }
 		todos = todos.map((item) => ({ ...item, tags: item.tags.filter((tag) => body.tags.includes(tag)) }))
 		tags = body.tags
-		return HttpResponse.json({ data: { message: 'Tag edited' } }, { status: 200 })
+		return HttpResponse.json({ data: tags }, { status: 200 })
 	}),
 
 	http.patch('/api/todos/:key', async ({ params, request }) => {

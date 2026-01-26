@@ -1,27 +1,23 @@
 import { useState } from 'react'
 import { usePostTodo } from '../api/fetchList'
-import { useAddTag, useGetTags } from '../../tags/api/fetchTag'
+import { useAddTag } from '../../tags/api/fetchTag'
 import type { TodoItem } from '../../../shared/types/todo'
 
 
 const useCreateTodoFetch = () => {
-	const { refetch: refetchTags } = useGetTags()
-	const { mutate: postTodo } = usePostTodo()
-	const { mutate: addTag } = useAddTag()
+	const { mutateAsync: postTodo } = usePostTodo()
+	const { mutateAsync: addTag } = useAddTag()
 
-    const addTodo = (todoText: string, tmpTagList: Array<string>) => {
-        postTodo({ text: todoText, tags: tmpTagList })
-        addTag(tmpTagList, {
-            onSettled: () => {
-                refetchTags()
-            }
-        })
+    const addTodo = async (todoText: string, tmpTagList: Array<string>) => {
+        try{
+            await postTodo({ text: todoText, tags: tmpTagList })
+            await addTag(tmpTagList)
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     return {
-        refetchTags,
-        postTodo,
-        addTag,
         addTodo
     }
 }

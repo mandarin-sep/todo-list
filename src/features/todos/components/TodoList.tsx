@@ -7,9 +7,9 @@ import FilterBtns from './UI/FilterBtns'
 import TodoItems from './TodoItems'
 import type { TodoItem } from '../../../shared/types/todo'
 
-export const TodoList = () => {
+export const TodoList = ({ todos }: { todos: Array<TodoItem> }) => {
 	const { displayedTags, selectedTag, editTagMode, handleCancelEditTags, handleEditTags, handleDeleteTag, setSelectedTag } = useEditTag()
-	const { filteredByStatus, handleFilter, filter } = useTodoFilters({ selectedTag })
+	const { filteredByStatus, handleFilter, filter } = useTodoFilters({ selectedTag, todos })
 
 	return (
 		<>

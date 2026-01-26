@@ -34,7 +34,7 @@ const TodoPage = () => {
                 <StatisticsField todos={todos} />
                 <div className="relative space-y-8">
                     <InputArea />
-                    {todos.length > 0 ? <TodoList /> : <EmptyField />}
+                    {todos.length > 0 ? <TodoList todos={todos} /> : <EmptyField />}
                     {isFetching || isMutating ? <LoadingOverlay /> : null}
                 </div>
             </div>
