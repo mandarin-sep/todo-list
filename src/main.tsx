@@ -11,9 +11,6 @@ import reportWebVitals from './reportWebVitals.ts'
 const queryClient = new QueryClient()
 const router = createRouter({
 	routeTree,
-	context: {
-		...queryClient
-	},
 	defaultPreload: 'intent',
 	scrollRestoration: true,
 	defaultStructuralSharing: true,

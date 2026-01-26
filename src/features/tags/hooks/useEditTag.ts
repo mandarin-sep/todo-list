@@ -1,24 +1,16 @@
 import { useState } from 'react'
 import { useGetTags, usePostTags } from '../api/fetchTag'
-import { useGetTodoList } from '../../todos/api/fetchList'
 
 
 const useEditTagFetch = () => {
     const { data: tags = [] } = useGetTags()
-    const { refetch: refetchTodos } = useGetTodoList()
 	const { mutate: postTags } = usePostTags()
 
     const addTags = (editedTags: Array<string>) => {
-        postTags(editedTags, {
-            onSettled: () => {
-                refetchTodos()
-            }
-        })
+        postTags(editedTags)
     }
     return {
         tags,
-        refetchTodos,
-        postTags,
         addTags
     }
 }

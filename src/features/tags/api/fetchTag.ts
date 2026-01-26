@@ -1,6 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getAxios, patchAxios, postAxios } from '../../../shared/utils/http'
 
+const areArraysEqual = (tmpList: Array<string>, real: Array<string>) => {
+	if (tmpList.length !== real.length) {
+		return false
+	}
+	return tmpList.every((value, index) => value === real[index])
+}
+
+const mergeTags = (current: Array<string>, inputTags: Array<string>) => {
+	const presentTags = [...current]
+	const presentTagSet = new Set(current)
+	for (const tag of inputTags) {
+		if (!presentTagSet.has(tag)) {
+			presentTagSet.add(tag)
+			presentTags.push(tag)
+		}
+	}
+	return presentTags
+}
+
 export const useGetTags = () => {
 	return useQuery({
 		queryKey: ['tags'],
@@ -22,15 +41,26 @@ export const usePostTags = () => {
 		onMutate: async (tags) => {
 			await queryClient.cancelQueries({ queryKey: ['tags'] })
 			const previous = queryClient.getQueryData<Array<string>>(['tags'])
-			queryClient.setQueryData<Array<string>>(['tags'], () => {
-				return tags
-			})
-			return { previous }
+			const localTags = [...tags]
+			queryClient.setQueryData<Array<string>>(['tags'], localTags)
+			return { previous, localTags }
 		},
 		onError: (_error, _tag, context) => {
-			if (context?.previous) {
-				queryClient.setQueryData<Array<string>>(['tags'], context.previous)
+			if (!context?.localTags) {
+				return
 			}
+			queryClient.setQueryData<Array<string> | undefined>(['tags'], (current) => {
+				if (!current) {
+					return current
+				}
+				if (!areArraysEqual(current, context.localTags)) {
+					return current
+				}
+				return context.previous
+			})
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['todos'] })
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ['tags'] })
@@ -49,18 +79,23 @@ export const useAddTag = () => {
 		onMutate: async (tags) => {
 			await queryClient.cancelQueries({ queryKey: ['tags'] })
 			const previous = queryClient.getQueryData<Array<string>>(['tags'])
-			queryClient.setQueryData<Array<string>>(['tags'], (current) => {
-				if (!current) {
-					return [...tags]
-				}
-				return [...current, ...tags]
-			})
-			return { previous }
+			const localTags = mergeTags(previous ?? [], tags)
+			queryClient.setQueryData<Array<string>>(['tags'], localTags)
+			return { previous, localTags }
 		},
 		onError: (_error, _payload, context) => {
-			if (context?.previous) {
-				queryClient.setQueryData<Array<string>>(['tags'], context.previous)
+			if (!context?.localTags) {
+				return
 			}
+			queryClient.setQueryData<Array<string> | undefined>(['tags'], (current) => {
+				if (!current) {
+					return current
+				}
+				if (!areArraysEqual(current, context.localTags)) {
+					return current
+				}
+				return context.previous
+			})
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ['tags'] })

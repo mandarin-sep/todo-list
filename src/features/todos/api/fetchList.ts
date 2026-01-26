@@ -27,24 +27,46 @@ export const usePostTodo = () => {
 		onMutate: async (payload) => {
 			await queryClient.cancelQueries({ queryKey: ['todos'] })
 
-			const previous = queryClient.getQueryData<Array<TodoItem>>(['todos'])
-			const optimistic: TodoItem = {
-				key: `temp-${Date.now()}`,
+			const optimisticKey = `temp-${Date.now()}-${Math.random().toString(16).slice(2)}`
+			const tmpTodoList: TodoItem = {
+				key: optimisticKey,
 				text: payload.text,
 				status: 'doing',
 				tags: payload.tags ?? []
 			}
 
 			queryClient.setQueryData<Array<TodoItem>>(['todos'], (current) => {
-				return current ? [...current, optimistic] : [optimistic]
+				return current ? [...current, tmpTodoList] : [tmpTodoList]
 			})
 
-			return { previous }
+			return { optimisticKey }
 		},
 		onError: (_error, _payload, context) => {
-			if (context?.previous) {
-				queryClient.setQueryData<Array<TodoItem>>(['todos'], context.previous)
+			if (!context?.optimisticKey) {
+				return
 			}
+			queryClient.setQueryData<Array<TodoItem>>(['todos'], (current) => {
+				if (!current) {
+					return current
+				}
+				return current.filter((todo) => todo.key !== context.optimisticKey)
+			})
+		},
+		onSuccess: (data, _payload, context) => {
+			const created = data.data
+			queryClient.setQueryData<Array<TodoItem>>(['todos'], (current) => {
+				if (!current) {
+					return [created]
+				}
+				const optimisticKey = context.optimisticKey
+				if (optimisticKey && current.some((todo) => todo.key === optimisticKey)) {
+					return current.map((todo) => (todo.key === optimisticKey ? created : todo))
+				}
+				if (current.some((todo) => todo.key === created.key)) {
+					return current
+				}
+				return [...current, created]
+			})
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ['todos'] })
@@ -70,7 +92,7 @@ export const usePatchTodo = () => {
 			await queryClient.cancelQueries({ queryKey: ['todos'] })
 
 			const previous = queryClient.getQueryData<Array<TodoItem>>(['todos'])
-
+			const previousTodo = previous?.find((todo) => todo.key === payload.key)
 			queryClient.setQueryData<Array<TodoItem>>(['todos'], (current) => {
 				if (!current) {
 					return current
@@ -80,7 +102,7 @@ export const usePatchTodo = () => {
 						return todo
 					}
 					return {
-						...todo,
+						key: todo.key,
 						text: payload.text ?? todo.text,
 						tags: payload.tags ?? todo.tags,
 						status: payload.status ?? todo.status
@@ -88,12 +110,19 @@ export const usePatchTodo = () => {
 				})
 			})
 
-			return { previous }
+			return { previousTodo }
 		},
-		onError: (_error, _payload, context) => {
-			if (context?.previous) {
-				queryClient.setQueryData<Array<TodoItem>>(['todos'], context.previous)
+		onError: (_error, payload, context) => {
+			const previousTodo = context?.previousTodo
+			if (!previousTodo) {
+				return
 			}
+			queryClient.setQueryData<Array<TodoItem>>(['todos'], (current) => {
+				if (!current) {
+					return current
+				}
+				return current.map((todo) => (todo.key === payload.key ? previousTodo : todo))
+			})
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ['todos'] })
@@ -111,17 +140,34 @@ export const useDeleteTodo = () => {
 			await queryClient.cancelQueries({ queryKey: ['todos'] })
 
 			const previous = queryClient.getQueryData<Array<TodoItem>>(['todos'])
+			const previousIndex = previous?.findIndex((todo) => todo.key === key) ?? -1
+			const previousTodo = previousIndex >= 0 && previous ? previous[previousIndex] : undefined
 
 			queryClient.setQueryData<Array<TodoItem>>(['todos'], (current) => {
 				return current ? current.filter((todo) => todo.key !== key) : []
 			})
 
-			return { previous }
+			return { previousTodo, previousIndex }
 		},
-		onError: (_error, _key, context) => {
-			if (context?.previous) {
-				queryClient.setQueryData<Array<TodoItem>>(['todos'], context.previous)
+		onError: (_error, key, context) => {
+			if (!context?.previousTodo) {
+				return
 			}
+			queryClient.setQueryData<Array<TodoItem>>(['todos'], (current) => {
+				if (!current) {
+					return current
+				}
+				if (current.some((todo) => todo.key === key)) {
+					return current
+				}
+				const next = [...current]
+				const insertAt =
+					context.previousIndex >= 0 && context.previousIndex <= next.length
+						? context.previousIndex
+						: next.length
+				next.splice(insertAt, 0, context.previousTodo!)
+				return next
+			})
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ['todos'] })
