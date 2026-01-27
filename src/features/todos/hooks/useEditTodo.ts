@@ -1,24 +1,25 @@
+import { useCallback } from 'react'
 import { useDeleteTodo, usePatchTodo } from '../api/fetchList'
 import type { TodoItem } from '../../../shared/types/todo'
 
 export const useEditTodo = ({ todo }: { todo: TodoItem }) => {
     const { mutate: deleteTodo } = useDeleteTodo()
 	const { mutate: patchTodo } = usePatchTodo()
-	const handleToggleStatus = () => {
+	const handleToggleStatus = useCallback(() => {
 		patchTodo({
 			key: todo.key,
 			status: todo.status === 'doing' ? 'done' : 'doing'
 		})
-	}
-	const handleDeleteTodo = () => {
+	}, [todo.key, todo.status, patchTodo])
+	const handleDeleteTodo = useCallback(() => {
 		deleteTodo(todo.key)
-	}
-	const handleDeleteTag = (tag: string) => {
+	}, [todo.key, deleteTodo])
+	const handleDeleteTag = useCallback((tag: string) => {
 		patchTodo({
 			key: todo.key,
 			tags: todo.tags.filter((current) => current !== tag)
 		})
-	}
+	}, [todo.key, todo.tags, patchTodo])
     return {
         handleToggleStatus,
         handleDeleteTodo,
