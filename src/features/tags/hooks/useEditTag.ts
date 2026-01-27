@@ -1,13 +1,13 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useGetTags, usePostTags } from '../api/fetchTag'
 
 const useEditTagFetch = () => {
     const { data: tags = [] } = useGetTags()
 	const { mutate: postTags } = usePostTags()
 
-    const addTags = (editedTags: Array<string>) => {
+    const addTags = useCallback((editedTags: Array<string>) => {
         postTags(editedTags)
-    }
+    }, [postTags])
     return {
         tags,
         addTags
@@ -18,20 +18,20 @@ const useEditTagLocal = ({ tags }: { tags: Array<string> }) => {
     const [editTagMode, setEditTagMode] = useState<boolean>(false)
     const [localTags, setLocalTags] = useState<Array<string>>(tags)
 
-    const editModeOn = (serverTags: Array<string>) => {
+    const editModeOn = useCallback( (serverTags: Array<string>) => {
         setLocalTags(serverTags)
         setEditTagMode(true)
-    }
-    const editModeOff = () => {
+    }, [setLocalTags, setEditTagMode])
+    const editModeOff = useCallback(() => {
         setEditTagMode(false)
-    }
-    const deleteTag = (tag: string) => {
+    }, [setEditTagMode])  
+    const deleteTag = useCallback((tag: string) => {
         setLocalTags(localTags.filter((current: string) => current !== tag))
-    }
-    const cancelEditMode = (serverTags: Array<string>) => {
+    }, [localTags])
+    const cancelEditMode = useCallback((serverTags: Array<string>) => {
         setLocalTags(serverTags)
         setEditTagMode(false)
-    }
+    }, [setLocalTags, setEditTagMode])
     return {
         selectedTag,
         setSelectedTag,
@@ -54,7 +54,7 @@ export const useEditTag = () => {
     const server = useEditTagFetch()
     const local = useEditTagLocal({ tags: server.tags })
 
-    const handleEditTags = (editedTags: Array<string>) => {
+    const handleEditTags = useCallback((editedTags: Array<string>) => {
 		if (local.editTagMode) {
             const uniqueTags = editedTags.filter((tag: string) => !isDuplicate(tag, server.tags))
             server.addTags(uniqueTags)
@@ -62,15 +62,14 @@ export const useEditTag = () => {
 		} else {
             local.editModeOn(editedTags)
 		}
-	}
-
-	const handleDeleteTag = (tag: string) => {
+	}, [local.editTagMode, server.tags, local.editModeOff, local.editModeOn])
+	const handleDeleteTag = useCallback((tag: string) => {
 		local.deleteTag(tag)
-	}
+	}, [local.deleteTag])
 
-	const handleCancelEditTags = () => {
+	const handleCancelEditTags = useCallback(() => {
         local.cancelEditMode(server.tags)
-	}
+	}, [local.cancelEditMode, server.tags])
 	const displayedTags = local.editTagMode ? local.localTags : server.tags
     
     
