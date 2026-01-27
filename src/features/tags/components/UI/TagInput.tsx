@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
+import { isInputValid } from '@/shared/hooks/isInputValid'
 
 const TagInput = ({ submitTag }: { submitTag: (tag: string) => void }) => {
 	const [tag, setTag] = useState('')
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
+		if (!isInputValid(tag)) return
+
 		submitTag(tag)
 		setTag('')
 	}

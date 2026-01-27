@@ -26,6 +26,9 @@ export const useGetTags = () => {
 		queryFn: async () => {
 			const res = await getAxios<{ data: Array<string> }>('/api/tags')
 			return res.data
+		},
+		onError: () => {	
+			window.alert('태그 조회에 실패했습니다.')
 		}
 	})
 }
@@ -46,6 +49,7 @@ export const usePostTags = () => {
 			return { previous, localTags }
 		},
 		onError: (_error, _tag, context) => {
+			window.alert('태그 상태 변경에 실패했습니다.')
 			if (!context?.localTags) {
 				return
 			}
@@ -84,6 +88,7 @@ export const useAddTag = () => {
 			return { previous, localTags }
 		},
 		onError: (_error, _payload, context) => {
+			window.alert('태그 추가에 실패했습니다.')
 			if (!context?.localTags) {
 				return
 			}

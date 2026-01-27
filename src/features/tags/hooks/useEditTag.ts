@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useGetTags, usePostTags } from '../api/fetchTag'
 
-
 const useEditTagFetch = () => {
     const { data: tags = [] } = useGetTags()
 	const { mutate: postTags } = usePostTags()
@@ -47,14 +46,19 @@ const useEditTagLocal = ({ tags }: { tags: Array<string> }) => {
     }
 }
 
+const isDuplicate = (target: string, list: Array<string>) => {
+    return list.includes(target)
+}
+
 export const useEditTag = () => {
     const server = useEditTagFetch()
     const local = useEditTagLocal({ tags: server.tags })
 
     const handleEditTags = (editedTags: Array<string>) => {
 		if (local.editTagMode) {
-			server.addTags(editedTags)
-			local.editModeOff()
+            const uniqueTags = editedTags.filter((tag: string) => !isDuplicate(tag, server.tags))
+            server.addTags(uniqueTags)
+            local.editModeOff() 
 		} else {
             local.editModeOn(editedTags)
 		}

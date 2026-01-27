@@ -8,6 +8,9 @@ export const useGetTodoList = () => {
 		queryFn: async () => {
 			const res = await getAxios<{ data: Array<TodoItem> }>('/api/todos')
 			return res.data
+		},
+		onError: () => {
+			window.alert('TodoList 조회에 실패했습니다.')
 		}
 	})
 }
@@ -42,6 +45,7 @@ export const usePostTodo = () => {
 			return { optimisticKey }
 		},
 		onError: (_error, _payload, context) => {
+			window.alert('TodoList 추가에 실패했습니다.')
 			if (!context?.optimisticKey) {
 				return
 			}
@@ -113,6 +117,7 @@ export const usePatchTodo = () => {
 			return { previousTodo }
 		},
 		onError: (_error, payload, context) => {
+			window.alert('TodoList 수정에 실패했습니다.')
 			const previousTodo = context?.previousTodo
 			if (!previousTodo) {
 				return
@@ -150,6 +155,7 @@ export const useDeleteTodo = () => {
 			return { previousTodo, previousIndex }
 		},
 		onError: (_error, key, context) => {
+			window.alert('TodoList 삭제에 실패했습니다.')
 			if (!context?.previousTodo) {
 				return
 			}

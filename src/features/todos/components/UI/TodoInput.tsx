@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { isInputValid } from '@/shared/hooks/isInputValid'
 
 export const TodoInput = ({
 	setShowTagInput,
@@ -12,6 +13,8 @@ export const TodoInput = ({
 	const [todo, setTodo] = useState('')
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
+		if (!isInputValid(todo)) return
+
 		submitTodo(todo)
 		setTodo('')
 	}
