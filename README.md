@@ -30,7 +30,6 @@
 
 ### 개발 도구
 - **MSW (Mock Service Worker)** - API 모킹
-- **Vitest** - 테스트 프레임워크
 - **ESLint & Prettier** - 코드 품질 관리
 - **TanStack Devtools** - 개발자 도구
 
@@ -49,6 +48,7 @@ src/
 ├── shared/           # 공유 유틸리티 및 타입
 │   ├── constants/    # 상수
 │   ├── types/        # 타입 정의
+│   ├── hooks/        # 커스텀 훅
 │   └── utils/        # 유틸리티 함수
 └── mocks/            # MSW 핸들러
 ```
