@@ -21,15 +21,12 @@ const mergeTags = (current: Array<string>, inputTags: Array<string>) => {
 }
 
 export const useGetTags = () => {
-	return useQuery({
+	return useQuery<Array<string>, Error>({
 		queryKey: ['tags'],
 		queryFn: async () => {
 			const res = await getAxios<{ data: Array<string> }>('/api/tags')
 			return res.data
 		},
-		onError: () => {	
-			window.alert('태그 조회에 실패했습니다.')
-		}
 	})
 }
 

@@ -2,15 +2,21 @@ import { useCallback, useState } from 'react'
 import { useGetTags, usePostTags } from '../api/fetchTag'
 
 const useEditTagFetch = () => {
-    const { data: tags = [] } = useGetTags()
+    const { data: tags = [], isError } = useGetTags()
 	const { mutate: postTags } = usePostTags()
-
-    const addTags = useCallback((editedTags: Array<string>) => {
+    if (isError) {
+        window.alert('태그 조회에 실패했습니다.')
+        return {
+            tags: [],
+            updateTags: () => {}
+        }
+    }
+    const updateTags = useCallback((editedTags: Array<string>) => {
         postTags(editedTags)
     }, [postTags])
     return {
         tags,
-        addTags
+        updateTags
     }
 }
 const useEditTagLocal = ({ tags }: { tags: Array<string> }) => {
@@ -46,18 +52,13 @@ const useEditTagLocal = ({ tags }: { tags: Array<string> }) => {
     }
 }
 
-const isDuplicate = (target: string, list: Array<string>) => {
-    return list.includes(target)
-}
-
 export const useEditTag = () => {
     const server = useEditTagFetch()
     const local = useEditTagLocal({ tags: server.tags })
 
     const handleEditTags = useCallback((editedTags: Array<string>) => {
 		if (local.editTagMode) {
-            const uniqueTags = editedTags.filter((tag: string) => !isDuplicate(tag, server.tags))
-            server.addTags(uniqueTags)
+            server.updateTags(editedTags)
             local.editModeOff() 
 		} else {
             local.editModeOn(editedTags)

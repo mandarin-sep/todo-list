@@ -17,10 +17,13 @@ const LoadingOverlay = () => (
 )
 
 const TodoPage = () => {
-    const { data: todos = [], isFetching } = useGetTodoList()
+    const { data: todos = [], isFetching, isError } = useGetTodoList()
     const isTodosMutating = useIsMutating({ mutationKey: ['todos'] }) > 0
     const isTagsMutating = useIsMutating({ mutationKey: ['tags'] }) > 0
     const isMutating = isTodosMutating || isTagsMutating
+    if (isError) {
+        window.alert('할 일 목록을 불러오는데 실패했습니다.')
+    }
     return (
         <div className="min-h-screen">
             <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">

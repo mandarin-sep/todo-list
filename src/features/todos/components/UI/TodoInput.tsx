@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { isInputValid } from '@/shared/hooks/isInputValid'
+import { isInputValid } from '@/shared/utils/isInputValid'
 
 export const TodoInput = ({
 	setShowTagInput,

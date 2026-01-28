@@ -3,15 +3,12 @@ import { deleteAxios, getAxios, patchAxios, postAxios } from '../../../shared/ut
 import type { TodoItem } from '../../../shared/types/todo'
 
 export const useGetTodoList = () => {
-	return useQuery({
+	return useQuery<Array<TodoItem>, Error>({
 		queryKey: ['todos'],
 		queryFn: async () => {
 			const res = await getAxios<{ data: Array<TodoItem> }>('/api/todos')
 			return res.data
 		},
-		onError: () => {
-			window.alert('TodoList 조회에 실패했습니다.')
-		}
 	})
 }
 

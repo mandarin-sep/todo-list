@@ -13,7 +13,7 @@ const useCreateTodoFetch = () => {
             await postTodo({ text: todoText, tags: tmpTagList })
             await addTag(tmpTagList)
         } catch (error) {
-            console.error(error)
+            window.alert('할 일 추가에 실패했습니다.')
         }
     }, [postTodo, addTag])
 

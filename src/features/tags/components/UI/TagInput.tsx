@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { isInputValid } from '@/shared/hooks/isInputValid'
+import { isInputValid } from '@/shared/utils/isInputValid'
 
 const TagInput = ({ submitTag }: { submitTag: (tag: string) => void }) => {
 	const [tag, setTag] = useState('')
