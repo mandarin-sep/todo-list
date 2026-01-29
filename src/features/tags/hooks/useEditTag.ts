@@ -1,14 +1,17 @@
 import { useCallback, useState } from 'react'
-import { useGetTags, usePostTags } from '../api/fetchTag'
+import { useAddTag, useGetTags, usePostTags } from '../api/fetchTag'
 
-const useEditTagFetch = () => {
+export const useEditTagFetch = () => {
     const { data: tags = [], isError } = useGetTags()
 	const { mutate: postTags } = usePostTags()
+    const { mutateAsync: addTag } = useAddTag()
+    
     if (isError) {
         window.alert('태그 조회에 실패했습니다.')
         return {
             tags: [],
-            updateTags: () => {}
+            updateTags: () => {},
+            addTag: async () => {},
         }
     }
     const updateTags = useCallback((editedTags: Array<string>) => {
@@ -16,6 +19,7 @@ const useEditTagFetch = () => {
     }, [postTags])
     return {
         tags,
+        addTag,
         updateTags
     }
 }

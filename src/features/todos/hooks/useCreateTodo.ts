@@ -1,12 +1,11 @@
 import { useCallback, useState } from 'react'
 import { usePostTodo } from '../api/fetchList'
-import { useAddTag } from '../../tags/api/fetchTag'
+import { useEditTagFetch } from '../../tags/hooks/useEditTag'
 import type { TodoItem } from '../../../shared/types/todo'
-
 
 const useCreateTodoFetch = () => {
 	const { mutateAsync: postTodo } = usePostTodo()
-	const { mutateAsync: addTag } = useAddTag()
+	const { addTag } = useEditTagFetch()
 
     const addTodo = useCallback(async (todoText: string, tmpTagList: Array<string>) => {
         try{
@@ -34,6 +33,10 @@ const useCreateTodoLocal = () => {
     }, [todoItem])
 
     const addTag = useCallback((tag: string) => {
+        if(tmpTagList.includes(tag)){
+            window.alert('이미 추가한 태그입니다.')
+            return
+        }
         setTmpTagList([...tmpTagList, tag])
         setTodoItem({ key: todoItem?.key || '', text: todoItem?.text || '', status: 'doing', tags: [...todoItem?.tags || [], tag] })
     }, [tmpTagList, todoItem])
